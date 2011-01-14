@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My New CouchApp</title>
+    <link rel="stylesheet" href="style/main.css" type="text/css">
+  </head>
+  <body>
+   <form id='login-form' style='display:none'>
+<input name='login-name' id='login-name'><input name='password' id='password' type='password'><br>
+<a href='#' onClick='login()'>Login</a> or <a href='#' onClick='register()'>Register</a>
+</form>
+  </body>
+  <script src="vendor/couchapp/loader.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    var foo;
+    $.couch.app(function(app) {
+      foo = app;
+    });
+    $.couch.session({
+      success:function(res){ 
+        console.log(res)
+        if (res.userCtx.name){
+          $('#message-form').show();
+          console.log(res);
+        }
+        else {
+          $('#login-form').show();
+        }
+      }
+    });
+    
+    $.couch.app(function(app){
+      $.ajaxSetup({
+        "error":function() {   
+          alert('Could not find user');
+        }
+      });
+      $.getJSON("http://"+window.location.hostname+"/_users/org.couchdb.user:"+username, function(res){
+        pubKey = res.public; //encrypt document for other user
+        if (!pubKey){
+          alert("No public key found for user");
+          return;
+        }
+      });
+    });
+  </script>
+</html>
